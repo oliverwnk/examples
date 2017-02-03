@@ -1,15 +1,17 @@
-# Example using KafkaSinglePortExactlyOnceOutputOperator
+# Example using KafkaSinglePortExactlyOnceOutputOperator (Kafka 0.9 API)
 
 This application shows the benefits of exactly-once OutputOperators by
-comparing the queues of two different Kafka topics using KafkaSinglePortOutputOperator for writing to one topic
-and KafkaSinglePortExactlyOnceOutputOperator for writing to an other.
+comparing the queues of two different Kafka topics using
+[KafkaSinglePortOutputOperator](https://github.com/apache/apex-malhar/blob/master/kafka/src/main/java/org/apache/apex/malhar/kafka/KafkaSinglePortOutputOperator.java)
+for writing to one topic and [KafkaSinglePortExactlyOnceOutputOperator](https://github.com/apache/apex-malhar/blob/master/kafka/src/main/java/org/apache/apex/malhar/kafka/KafkaSinglePortExactlyOnceOutputOperator.java)
+for writing to an other.
 
 The Application reads lines from a file on HDFS using LineByLineFileInputOperator
-and passes them to the PassthroughFailOperator which emits the lines to both of the KafkaOutputOperators.
+and passes them to the PassthroughFailOperator which emits lines to both of the KafkaOutputOperators.
 
-To produce an exactly-once scenario the PassthroughFailOperator kills itself after a couple of processed lines
-by throwing an exception. YARN will deploy the Operator in a new container,
-hence the not checkpointed tuples will be passed to the OutputOperators more than once.
+To produce an exactly-once scenario the PassthroughFailOperator kills itself after a certain number
+of processed lines by throwing an exception. YARN will deploy the Operator in a new container,
+hence not checkpointed tuples will be passed to the OutputOperators more than once.
 
 Comparing the two topics in Kafka or using the included CompareKafkaTopicsApplication will show how
 KafkaSinglePortExactlyOnceOutputOperator handled this scenario.

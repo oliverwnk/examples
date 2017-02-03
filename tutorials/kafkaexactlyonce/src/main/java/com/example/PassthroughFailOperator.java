@@ -1,3 +1,21 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package com.example;
 
 import java.io.IOException;
@@ -17,24 +35,31 @@ import com.datatorrent.api.DefaultOutputPort;
 import com.datatorrent.common.util.BaseOperator;
 
 /**
- * Created by oliver on 1/31/17.
+ * To produce an exactly-once scenario the PassthroughFailOperator kills itself after a certain number
+ * of processed lines by throwing an exception. YARN will deploy the Operator in a new container,
+ * hence not checkpointed tuples will be passed to the OutputOperators more than once.
  */
 public class PassthroughFailOperator extends BaseOperator
 {
-
   private static final Logger LOG = LoggerFactory.getLogger(PassthroughFailOperator.class);
-  public final transient DefaultOutputPort<String> output = new DefaultOutputPort<>();
-
-  private boolean hasBeenKilledString;
+  private boolean hasBeenKilled;
+  //amount of emitted tuples until operator kills itself
   int tuplesUntilKill = 5;
 
   @NotNull
   private String directoryPath;
+
   private String filePath;
+  private transient FileSystem hdfs;
+  private transient Path filePathObj;
 
-  transient FileSystem hdfs;
-  transient Path filePathObj;
+  public final transient DefaultOutputPort<String> output = new DefaultOutputPort<>();
 
+  /**
+   * Loads file from HDFS and sets {@link #hasBeenKilled} flag if it already exists
+   *
+   * @param context
+   */
   @Override
   public void setup(Context.OperatorContext context)
   {
@@ -52,7 +77,7 @@ public class PassthroughFailOperator extends BaseOperator
     filePathObj = new Path(filePath);
     try {
       if (hdfs.exists(filePathObj)) {
-        hasBeenKilledString = true;
+        hasBeenKilled = true;
         LOG.info("file already exists -> Operator has been killed before");
       }
     } catch (IOException e) {
@@ -60,24 +85,28 @@ public class PassthroughFailOperator extends BaseOperator
     }
   }
 
-  public final transient DefaultInputPort<String>
-    input = new DefaultInputPort<String>()
+  public final transient DefaultInputPort<String> input = new DefaultInputPort<String>()
   {
-
+    /**
+     * Creates file on HDFS identified by ApplicationId to save hasBeenKilled state, if operator has not been killed yet.
+     * Throws Exception to kill operator.
+     *
+     * @param line
+     */
     @Override
     public void process(String line)
     {
       LOG.info("LINE " + line);
-      if (!hasBeenKilledString && tuplesUntilKill <= 0) {
+      if (!hasBeenKilled && tuplesUntilKill <= 0) {
         try {
           hdfs.createNewFile(filePathObj);
-          LOG.info("created file for hasBeenKilled state");
+          LOG.info("Created file " + filePath);
         } catch (IOException e) {
           e.printStackTrace();
         }
         //kill operator
         LOG.info("OPERATOR KILLED THROUGH EXCEPTION");
-        RuntimeException e = new RuntimeException();
+        RuntimeException e = new RuntimeException("Exception to intentionally kill operator");
         throw e;
       }
       output.emit(line);

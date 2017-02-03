@@ -1,5 +1,20 @@
 /**
- * Put your copyright and license info here.
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package com.example;
 
@@ -16,6 +31,15 @@ import com.datatorrent.api.StreamingApplication;
 import com.datatorrent.api.annotation.ApplicationAnnotation;
 import com.datatorrent.lib.io.ConsoleOutputOperator;
 
+/**
+ * This application shows the benefits of exactly-once OutputOperators by
+ * comparing the queues of two different Kafka topics using KafkaSinglePortOutputOperator for writing to one topic
+ * and KafkaSinglePortExactlyOnceOutputOperator for writing to an other.
+ *
+ * The Application reads lines from a file on HDFS using LineByLineFileInputOperator
+ * and passes them to the PassthroughFailOperator which emits lines to both of the KafkaOutputOperators. (Kafka 0.9 API)
+ */
+
 @ApplicationAnnotation(name = "KafkaExactlyOnceApp")
 public class Application implements StreamingApplication
 {
@@ -23,11 +47,6 @@ public class Application implements StreamingApplication
   @Override
   public void populateDAG(DAG dag, Configuration conf)
   {
-
-    //test
-//    WindowIdInputOperator windowIdInput = dag.addOperator("inputOperator", WindowIdInputOperator.class);
-
-    dag.getAttributes().put(DAG.STREAMING_WINDOW_SIZE_MILLIS, 200);
     //read lines from incoming files in 'inputDirectory' (set in properties.xml)
     LineByLineFileInputOperator lineInputOperator =
         dag.addOperator("lineInputOperator", LineByLineFileInputOperator.class);
@@ -46,13 +65,12 @@ public class Application implements StreamingApplication
     props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
     props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
 
-    //kafkaOutOperator.setTopic("exactly-once");
     kafkaExactlyOnceOutputOperator.setProperties(props);
     kafkaOutputOperator.setProperties(props);
 
     dag.addStream("linesToPassthrough", lineInputOperator.output, passthroughFailOperator.input);
     dag.addStream("linesToKafka", passthroughFailOperator.output, kafkaOutputOperator.inputPort,
-        kafkaExactlyOnceOutputOperator.inputPort, consoleOutputOperator.input);
+      kafkaExactlyOnceOutputOperator.inputPort, consoleOutputOperator.input);
 
   }
 }
