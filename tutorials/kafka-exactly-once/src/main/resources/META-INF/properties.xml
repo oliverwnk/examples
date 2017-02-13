@@ -2,29 +2,25 @@
 <configuration>
 
   <property>
-    <name>dt.application.KafkaExactlyOnceApp.operator.passthrough.prop.directoryPath</name>
-    <value>/kafka_exactly/</value>
+    <name>dt.application.KafkaExactlyOnce.operator.passthrough.prop.directoryPath</name>
+    <value>/kafka_exactly</value>
   </property>
   <property>
-    <name>dt.application.KafkaExactlyOnceApp.operator.lineInputOperator.prop.directory</name>
+    <name>dt.application.KafkaExactlyOnce.operator.lineInputOperator.prop.directory</name>
     <value>/kafka_exactly/inputLines.txt</value>
   </property>
 
   <!-- Topic names for the kafka output operators -->
   <property>
-    <name>dt.application.KafkaExactlyOnceApp.operator.kafkaExactlyOnceOutputOperator.prop.topic</name>
+    <name>dt.application.KafkaExactlyOnce.operator.kafkaExactlyOnceOutputOperator.prop.topic</name>
     <value>exactly-once</value>
   </property>
   <property>
-    <name>dt.application.KafkaExactlyOnceApp.operator.kafkaOutputOperator.prop.topic</name>
+    <name>dt.application.KafkaExactlyOnce.operator.kafkaOutputOperator.prop.topic</name>
     <value>not-exactly-once</value>
   </property>
 
   <!-- CompareKafkaTopicsApplication: kafka input operator (0.9) -->
-  <property>
-    <name>dt.application.CompareKafkaTopicsApp.operator.kafkaInput.prop.initialPartitionCount</name>
-    <value>1</value>
-  </property>
   <property>
     <name>dt.application.CompareKafkaTopicsApp.operator.kafkaInput.prop.topics</name>
     <value>not-exactly-once,exactly-once</value>

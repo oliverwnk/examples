@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -42,7 +42,7 @@ import com.datatorrent.common.util.BaseOperator;
 public class PassthroughFailOperator extends BaseOperator
 {
   private static final Logger LOG = LoggerFactory.getLogger(PassthroughFailOperator.class);
-  private boolean hasBeenKilled;
+  private boolean killed;
   //amount of emitted tuples until operator kills itself
   int tuplesUntilKill = 5;
 
@@ -56,7 +56,7 @@ public class PassthroughFailOperator extends BaseOperator
   public final transient DefaultOutputPort<String> output = new DefaultOutputPort<>();
 
   /**
-   * Loads file from HDFS and sets {@link #hasBeenKilled} flag if it already exists
+   * Loads file from HDFS and sets {@link #killed} flag if it already exists
    *
    * @param context
    */
@@ -65,7 +65,7 @@ public class PassthroughFailOperator extends BaseOperator
   {
     super.setup(context);
     String appId = context.getValue(Context.DAGContext.APPLICATION_ID);
-    filePath = directoryPath + appId;
+    filePath = directoryPath + "/" + appId;
 
     LOG.info("FilePath: " + filePath);
     try {
@@ -77,7 +77,7 @@ public class PassthroughFailOperator extends BaseOperator
     filePathObj = new Path(filePath);
     try {
       if (hdfs.exists(filePathObj)) {
-        hasBeenKilled = true;
+        killed = true;
         LOG.info("file already exists -> Operator has been killed before");
       }
     } catch (IOException e) {
@@ -88,7 +88,7 @@ public class PassthroughFailOperator extends BaseOperator
   public final transient DefaultInputPort<String> input = new DefaultInputPort<String>()
   {
     /**
-     * Creates file on HDFS identified by ApplicationId to save hasBeenKilled state, if operator has not been killed yet.
+     * Creates file on HDFS identified by ApplicationId to save killed state, if operator has not been killed yet.
      * Throws Exception to kill operator.
      *
      * @param line
@@ -97,7 +97,13 @@ public class PassthroughFailOperator extends BaseOperator
     public void process(String line)
     {
       LOG.info("LINE " + line);
-      if (!hasBeenKilled && tuplesUntilKill <= 0) {
+
+      if (killed) {
+        output.emit(line);
+      } else if (tuplesUntilKill > 0) {
+        output.emit(line);
+        tuplesUntilKill--;
+      } else {
         try {
           hdfs.createNewFile(filePathObj);
           LOG.info("Created file " + filePath);
@@ -109,8 +115,6 @@ public class PassthroughFailOperator extends BaseOperator
         RuntimeException e = new RuntimeException("Exception to intentionally kill operator");
         throw e;
       }
-      output.emit(line);
-      tuplesUntilKill--;
     }
   };
 

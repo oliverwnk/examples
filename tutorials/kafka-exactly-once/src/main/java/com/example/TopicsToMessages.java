@@ -2,6 +2,7 @@ package com.example;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 /**
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -29,27 +30,26 @@ import com.datatorrent.api.DefaultOutputPort;
 /**
  * Reads messages from Kafka topics and maps them to topic as the keys
  */
-public class MapTopicsToMessagesKafkaSinglePortInputOperator extends KafkaSinglePortInputOperator
+public class TopicsToMessages extends KafkaSinglePortInputOperator
 {
-  private transient Map<String, ArrayList<String>> messagesMap = new HashMap<>();
+  private transient Map<String, List<String>> messagesMap = new HashMap<>();
 
   /**
    * This output port emits tuples extracted from Kafka messages.
    */
-  public final transient DefaultOutputPort<Map<String, ArrayList<String>>> outputPort = new DefaultOutputPort<>();
+  public final transient DefaultOutputPort<Map<String, List<String>>> outputPort = new DefaultOutputPort<>();
 
   @Override
   protected void emitTuple(String cluster, ConsumerRecord<byte[], byte[]> message)
   {
-    ArrayList<String> list;
-    if (messagesMap.get(message.topic()) == null) {
+    final String topic = message.topic();
+    List<String> list = messagesMap.get(topic);
+    if (list == null) {
       list = new ArrayList<>();
-    } else {
-      list = messagesMap.get(message.topic());
+      messagesMap.put(topic, (list));
     }
-
     list.add(new String(message.value()));
-    messagesMap.put(message.topic(), list);
+    messagesMap.put(topic, list);
   }
 
   @Override

@@ -27,7 +27,7 @@ import com.datatorrent.api.annotation.ApplicationAnnotation;
 import com.datatorrent.lib.io.ConsoleOutputOperator;
 
 /**
- * This application uses {@link MapTopicsToMessagesKafkaSinglePortInputOperator} to read
+ * This application uses {@link TopicsToMessages} to read
  * the written messages from Kafka topics and emit a Map<String, ArrayList<String>>
  * with Kafka topics as the key to ConsoleOutputOperator.
  */
@@ -38,8 +38,8 @@ public class CompareKafkaTopicsApplication implements StreamingApplication
   @Override
   public void populateDAG(DAG dag, Configuration conf)
   {
-    MapTopicsToMessagesKafkaSinglePortInputOperator kafkaInputOperator =
-        dag.addOperator("kafkaInput", MapTopicsToMessagesKafkaSinglePortInputOperator.class);
+    TopicsToMessages kafkaInputOperator =
+        dag.addOperator("kafkaInput", TopicsToMessages.class);
     ConsoleOutputOperator consoleOperator = dag.addOperator("consoleOperator", ConsoleOutputOperator.class);
 
     kafkaInputOperator.setInitialOffset(AbstractKafkaInputOperator.InitialOffset.EARLIEST.name());
