@@ -20,7 +20,9 @@ package com.example;
 
 import java.util.Properties;
 
+import org.apache.apex.malhar.kafka.AbstractKafkaInputOperator;
 import org.apache.apex.malhar.kafka.KafkaSinglePortExactlyOnceOutputOperator;
+import org.apache.apex.malhar.kafka.KafkaSinglePortInputOperator;
 import org.apache.apex.malhar.kafka.KafkaSinglePortOutputOperator;
 import org.apache.apex.malhar.lib.fs.LineByLineFileInputOperator;
 import org.apache.hadoop.conf.Configuration;
@@ -47,14 +49,12 @@ public class Application implements StreamingApplication
   @Override
   public void populateDAG(DAG dag, Configuration conf)
   {
-    LineByLineFileInputOperator lineInputOperator =
-        dag.addOperator("lineInputOperator", LineByLineFileInputOperator.class);
+
+    BatchSequenceGenerator sequenceGenerator = dag.addOperator("sequenceGenerator", BatchSequenceGenerator.class);
     KafkaSinglePortExactlyOnceOutputOperator<String> kafkaExactlyOnceOutputOperator =
         dag.addOperator("kafkaExactlyOnceOutputOperator", KafkaSinglePortExactlyOnceOutputOperator.class);
     KafkaSinglePortOutputOperator kafkaOutputOperator =
         dag.addOperator("kafkaOutputOperator", KafkaSinglePortOutputOperator.class);
-    ConsoleOutputOperator consoleOutputOperator =
-        dag.addOperator("consoleOutputOperator", ConsoleOutputOperator.class);
     PassthroughFailOperator passthroughFailOperator = dag.addOperator("passthrough", PassthroughFailOperator.class);
 
     //properties for kafka output operators
@@ -67,9 +67,14 @@ public class Application implements StreamingApplication
     kafkaExactlyOnceOutputOperator.setProperties(props);
     kafkaOutputOperator.setProperties(props);
 
-    dag.addStream("linesToPassthrough", lineInputOperator.output, passthroughFailOperator.input);
+    dag.addStream("sequenceToPassthrough", sequenceGenerator.out, passthroughFailOperator.input);
     dag.addStream("linesToKafka", passthroughFailOperator.output, kafkaOutputOperator.inputPort,
-      kafkaExactlyOnceOutputOperator.inputPort, consoleOutputOperator.input);
+      kafkaExactlyOnceOutputOperator.inputPort);
 
+    KafkaTopicMessageInputOperator kafkaInput = dag.addOperator("kafkaInput", KafkaTopicMessageInputOperator.class);
+    MessagesValidationToFile validationToFile = dag.addOperator("validationToFile", MessagesValidationToFile.class);
+    kafkaInput.setInitialOffset(KafkaTopicMessageInputOperator.InitialOffset.EARLIEST.name());
+
+    dag.addStream("messages", kafkaInput.outputPort, validationToFile.input);
   }
 }

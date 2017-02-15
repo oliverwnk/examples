@@ -22,12 +22,20 @@
 
   <!-- CompareKafkaTopicsApplication: kafka input operator (0.9) -->
   <property>
-    <name>dt.application.CompareKafkaTopicsApp.operator.kafkaInput.prop.topics</name>
+    <name>dt.application.KafkaExactlyOnce.operator.kafkaInput.prop.topics</name>
     <value>not-exactly-once,exactly-once</value>
   </property>
   <property>
-    <name>dt.application.CompareKafkaTopicsApp.operator.kafkaInput.prop.clusters</name>
-    <value>localhost:9092</value>  <!-- broker (NOT zookeeper) address -->
+  <name>dt.application.KafkaExactlyOnce.operator.kafkaInput.prop.clusters</name>
+  <value>localhost:9092</value>  <!-- broker (NOT zookeeper) address -->
+</property>
+  <property>
+    <name>dt.application.KafkaExactlyOnce.operator.validationToFile.prop.outputFileName</name>
+    <value>validation.txt</value>
+  </property>
+  <property>
+    <name>dt.application.KafkaExactlyOnce.operator.validationToFile.prop.filePath</name>
+    <value>target</value>
   </property>
 </configuration>
 

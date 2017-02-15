@@ -10,9 +10,7 @@ import org.slf4j.LoggerFactory;
 import javax.validation.constraints.Min;
 
 /**
- * Simple operator that emits pairs of integers where the first value is the
- * operator id and the second forms elements of an arithmetic progression whose
- * increment is 'divisor' (can be changed dynamically).
+ * Simple operator that emits Strings from 1 to maxTuplesTotal
  */
 public class BatchSequenceGenerator extends BaseOperator implements InputOperator
 {
@@ -24,32 +22,16 @@ public class BatchSequenceGenerator extends BaseOperator implements InputOperato
   private int maxTuplesTotal = 20;     // max number of tuples in total
   @Min(1)
   private int maxTuples = 5;           // max number of tuples per window
-  @Min(1)
-  private long divisor = 1;            // only values divisible by divisor are output
 
   private int sleepTime;
-
-  private long nextValue;              // next value to emit
 
   private int numTuplesTotal = 0;
 
   // transient fields
 
   private transient int numTuples = 0;    // number emitted in current window
-  private transient long id;              // operator id
 
-  public final transient DefaultOutputPort<Long[]> out = new DefaultOutputPort<>();
-
-  @Override
-  public void setup(OperatorContext context)
-  {
-    super.setup(context);
-
-    id = context.getId();
-    sleepTime = context.getValue(OperatorContext.SPIN_MILLIS);
-    LOG.debug("Leaving setup, id = {}, sleepTime = {}, divisor = {}",
-              id, sleepTime, divisor);
-  }
+  public final transient DefaultOutputPort<String> out = new DefaultOutputPort<>();
 
   @Override
   public void beginWindow(long windowId)
@@ -62,18 +44,9 @@ public class BatchSequenceGenerator extends BaseOperator implements InputOperato
   public void emitTuples()
   {
     if (numTuplesTotal < maxTuplesTotal && numTuples < maxTuples) {
-      // nextValue will normally be divisible by divisor but the divisor can be changed
-      // externally (e.g. after a repartition) so find next value that is divisible by
-      // divisor
-      //
-      final long rem = nextValue % divisor;
-      if (0 != rem) {
-        nextValue += (divisor - rem);
-      }
-      ++maxTuplesTotal;
+      ++numTuplesTotal;
       ++numTuples;
-      out.emit(new Long[]{id, nextValue});
-      nextValue += divisor;
+      out.emit(String.valueOf(numTuplesTotal));
     } else {
 
       try {
@@ -85,10 +58,9 @@ public class BatchSequenceGenerator extends BaseOperator implements InputOperato
     }
   }
 
-  // getters and setters
-
-  public long getDivisor() { return divisor; }
-  public void setDivisor(long v) { divisor = v; }
   public int getMaxTuples() { return maxTuples; }
   public void setMaxTuples(int v) { maxTuples = v; }
+
+  public int getMaxTuplesTotal() { return maxTuplesTotal; }
+  public void setMaxTuplesTotal(int v) { maxTuplesTotal = v; }
 }

@@ -43,8 +43,9 @@ public class PassthroughFailOperator extends BaseOperator
 {
   private static final Logger LOG = LoggerFactory.getLogger(PassthroughFailOperator.class);
   private boolean killed;
+
   //amount of emitted tuples until operator kills itself
-  int tuplesUntilKill = 5;
+  private int tuplesUntilKill = 5;
 
   @NotNull
   private String directoryPath;
@@ -68,13 +69,13 @@ public class PassthroughFailOperator extends BaseOperator
     filePath = directoryPath + "/" + appId;
 
     LOG.info("FilePath: " + filePath);
+    filePathObj = new Path(filePath);
     try {
-      hdfs = FileSystem.newInstance(new Path(filePath).toUri(), new Configuration());
+      hdfs = FileSystem.newInstance(filePathObj.toUri(), new Configuration());
     } catch (IOException e) {
       e.printStackTrace();
     }
 
-    filePathObj = new Path(filePath);
     try {
       if (hdfs.exists(filePathObj)) {
         killed = true;
@@ -97,7 +98,6 @@ public class PassthroughFailOperator extends BaseOperator
     public void process(String line)
     {
       LOG.info("LINE " + line);
-
       if (killed) {
         output.emit(line);
       } else if (tuplesUntilKill > 0) {
@@ -111,7 +111,7 @@ public class PassthroughFailOperator extends BaseOperator
           e.printStackTrace();
         }
         //kill operator
-        LOG.info("OPERATOR KILLED THROUGH EXCEPTION");
+        LOG.info("Operator intentionally killed through exception");
         RuntimeException e = new RuntimeException("Exception to intentionally kill operator");
         throw e;
       }
@@ -126,6 +126,16 @@ public class PassthroughFailOperator extends BaseOperator
   public void setDirectoryPath(String directoryPath)
   {
     this.directoryPath = directoryPath;
+  }
+
+  public int getTuplesUntilKill()
+  {
+    return tuplesUntilKill;
+  }
+
+  public void setTuplesUntilKill(int tuplesUntilKill)
+  {
+    this.tuplesUntilKill = tuplesUntilKill;
   }
 
 }
