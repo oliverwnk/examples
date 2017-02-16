@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.apex.malhar.kafka.AbstractKafkaInputOperator;
-import org.apache.apex.malhar.kafka.KafkaSinglePortInputOperator;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import com.datatorrent.api.DefaultOutputPort;
@@ -17,7 +16,7 @@ public class KafkaTopicMessageInputOperator extends AbstractKafkaInputOperator
 {
   private static final Logger LOG = LoggerFactory.getLogger(KafkaTopicMessageInputOperator.class);
   /**
-   * This output port emits tuples extracted from Kafka messages.
+   * This output port emits (message.topic, message.value) pairs extracted from Kafka messages.
    */
   public final transient DefaultOutputPort<KeyValPair<String, String>> outputPort = new DefaultOutputPort<>();
 

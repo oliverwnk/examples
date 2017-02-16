@@ -33,6 +33,8 @@ import com.datatorrent.api.StreamingApplication;
 import com.datatorrent.api.annotation.ApplicationAnnotation;
 import com.datatorrent.lib.io.ConsoleOutputOperator;
 
+import kafka.consumer.ConsumerConfig;
+
 /**
  * This application shows the benefits of exactly-once OutputOperators by
  * comparing the queues of two different Kafka topics using KafkaSinglePortOutputOperator for writing to one topic
@@ -63,6 +65,8 @@ public class Application implements StreamingApplication
     // Kafka's Key field is used by KafkaSinglePortExactlyOnceOutputOperator to implement exactly once property
     props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
     props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
+    props.put(, "org.apache.kafka.common.serialization.StringDeserializer");
+    props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 
     kafkaExactlyOnceOutputOperator.setProperties(props);
     kafkaOutputOperator.setProperties(props);

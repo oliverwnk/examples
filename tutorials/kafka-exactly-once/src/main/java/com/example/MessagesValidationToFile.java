@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.validation.constraints.NotNull;
+
 import com.datatorrent.lib.io.fs.AbstractSingleFileOutputOperator;
 import com.datatorrent.lib.util.KeyValPair;
 
@@ -18,11 +20,15 @@ public class MessagesValidationToFile extends AbstractSingleFileOutputOperator<K
   private Map<String, List<String>> messagesMap = new HashMap<>();
   private String latestExactlyValue;
   private String latestAtLeastValue;
+
+  @NotNull
+  private String maxTuplesTotal;
   List<String> exactlyList;
   List<String> atLeastList;
 
   @Override
-  public void teardown(){
+  public void teardown()
+  {
     super.requestFinalize(outputFileName);
     super.teardown();
 
@@ -33,18 +39,7 @@ public class MessagesValidationToFile extends AbstractSingleFileOutputOperator<K
   {
     final String topic = pair.getKey();
     final String value = new String(pair.getValue());
-//    List<String> list = messagesMap.get(topic);
-//    if (list == null) {
-//      list = new ArrayList<>();
-//      messagesMap.put(topic, list);
-//    }
-//    list.add(new String(message.value()));
-//
-//
-//    List<String> exactlyList = messagesMap.get("exactly-once");
-//    List<String> atLeastList = messagesMap.get("not-exactly-once");
-//
-//    if(exactlyList.)
+
     if (topic.equals("exactly-once")) {
       latestExactlyValue = value;
       if (exactlyList == null) {
@@ -52,7 +47,7 @@ public class MessagesValidationToFile extends AbstractSingleFileOutputOperator<K
       }
       exactlyList.add(value);
     }
-    if (topic.equals("not-exactly-once")) {
+    if (topic.equals("at-least-once")) {
       latestAtLeastValue = value;
       if (atLeastList == null) {
         atLeastList = new ArrayList<>();
@@ -61,7 +56,7 @@ public class MessagesValidationToFile extends AbstractSingleFileOutputOperator<K
     }
 
     if (latestExactlyValue != null && latestAtLeastValue != null) {
-      if (latestExactlyValue.equals("20") && latestAtLeastValue.equals("20")) {
+      if (latestExactlyValue.equals(maxTuplesTotal) && latestAtLeastValue.equals(maxTuplesTotal)) {
         Set<String> exactlySet = new HashSet<>(exactlyList);
         Set<String> atLeastSet = new HashSet<>(atLeastList);
 
@@ -76,5 +71,15 @@ public class MessagesValidationToFile extends AbstractSingleFileOutputOperator<K
       return new byte[0];
 
     }
+  }
+
+  public String getMaxTuplesTotal()
+  {
+    return maxTuplesTotal;
+  }
+
+  public void setMaxTuplesTotal(String maxTuplesTotal)
+  {
+    this.maxTuplesTotal = maxTuplesTotal;
   }
 }

@@ -2,12 +2,23 @@
 <configuration>
 
   <property>
-    <name>dt.application.KafkaExactlyOnce.operator.passthrough.prop.directoryPath</name>
-    <value>/kafka_exactly</value>
+    <name>dt.application.KafkaExactlyOnce.operator.*.attr.MEMORY_MB</name>
+    <value>512</value>
+  </property>
+
+  <!-- set maxTuplesTotal for both BatchSequenceGenerator and MessagesValidationToFile -->
+  <property>
+    <name>dt.application.KafkaExactlyOnce.operator.(sequenceGenerator)|(validationToFile).prop.maxTuplesTotal</name>
+    <value>20</value>
+  </property>
+  <!-- max tuples per window -->
+  <property>
+    <name>dt.application.KafkaExactlyOnce.operator.sequenceGenerator.prop.maxTuples</name>
+    <value>5</value>
   </property>
   <property>
-    <name>dt.application.KafkaExactlyOnce.operator.lineInputOperator.prop.directory</name>
-    <value>/kafka_exactly/inputLines.txt</value>
+    <name>dt.application.KafkaExactlyOnce.operator.passthrough.prop.directoryPath</name>
+    <value>/tmp/kafka_exactly</value>
   </property>
 
   <!-- Topic names for the kafka output operators -->
@@ -17,13 +28,13 @@
   </property>
   <property>
     <name>dt.application.KafkaExactlyOnce.operator.kafkaOutputOperator.prop.topic</name>
-    <value>not-exactly-once</value>
+    <value>at-least-once</value>
   </property>
 
-  <!-- CompareKafkaTopicsApplication: kafka input operator (0.9) -->
+  <!-- Validation: kafka input operator (0.9) -->
   <property>
     <name>dt.application.KafkaExactlyOnce.operator.kafkaInput.prop.topics</name>
-    <value>not-exactly-once,exactly-once</value>
+    <value>at-least-once,exactly-once</value>
   </property>
   <property>
   <name>dt.application.KafkaExactlyOnce.operator.kafkaInput.prop.clusters</name>
@@ -35,7 +46,7 @@
   </property>
   <property>
     <name>dt.application.KafkaExactlyOnce.operator.validationToFile.prop.filePath</name>
-    <value>target</value>
+    <value>/tmp/kafka_exactly</value>
   </property>
 </configuration>
 

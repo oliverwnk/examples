@@ -19,9 +19,9 @@ public class BatchSequenceGenerator extends BaseOperator implements InputOperato
   // properties
 
   @Min(1)
-  private int maxTuplesTotal = 20;     // max number of tuples in total
+  private int maxTuplesTotal;     // max number of tuples in total
   @Min(1)
-  private int maxTuples = 5;           // max number of tuples per window
+  private int maxTuples;           // max number of tuples per window
 
   private int sleepTime;
 
@@ -43,7 +43,9 @@ public class BatchSequenceGenerator extends BaseOperator implements InputOperato
   @Override
   public void emitTuples()
   {
+    LOG.info("abc1: " + numTuplesTotal + maxTuplesTotal + numTuples + maxTuples);
     if (numTuplesTotal < maxTuplesTotal && numTuples < maxTuples) {
+      LOG.info("abc2");
       ++numTuplesTotal;
       ++numTuples;
       out.emit(String.valueOf(numTuplesTotal));
