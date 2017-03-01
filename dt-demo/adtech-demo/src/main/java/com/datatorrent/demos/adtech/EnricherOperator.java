@@ -26,6 +26,7 @@ public class EnricherOperator extends BaseOperator
   @Override
   public void setup(Context.OperatorContext context)
   {
+    AggregatorRegistry.DEFAULT_AGGREGATOR_REGISTRY.setup();
     //get list of locations from csvSchema.json to enrich locationID to also locationName
     String schemaJson = SchemaUtils.jarResourceFileToString("adsGenericEventSchema.json");
     schema = new DimensionalConfigurationSchema(schemaJson, AggregatorRegistry.DEFAULT_AGGREGATOR_REGISTRY);

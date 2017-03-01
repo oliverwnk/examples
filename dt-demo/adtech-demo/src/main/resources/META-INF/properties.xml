@@ -14,7 +14,7 @@
   -->
   <property>
     <name>dt.application.KafkaDataGenerator.operator.InputGenerator.numTuplesPerWindow</name>
-    <value>500</value>
+    <value>2500</value>
   </property>
   <property>
     <name>dt.application.KafkaDataGenerator.operator.kafkaOutput.prop.topic</name>
