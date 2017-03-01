@@ -26,11 +26,37 @@
   </property>
   <property>
     <name>dt.application.adTechDemo.operator.kafkaInput.prop.clusters</name>
-    <value>localhost:9092</value>  <!-- broker (NOT zookeeper) address -->
+    <value>node18.morado.com:9092</value>  <!-- broker (NOT zookeeper) address -->
   </property>
   <property>
     <name>dt.application.adTechDemo.operator.csvParser.port.out.attr.TUPLE_CLASS</name>
     <value>com.datatorrent.demos.adtech.AdInfo</value>
+  </property>
+
+  <!-- dimensions computing -->
+  <property>
+    <name>dt.application.adTechDemo.operator.Store.fileStore.basePath</name>
+    <value>AdsDimensionsDemo/Store</value>
+  </property>
+  <property>
+    <name>dt.application.adTechDemo.operator.DimensionsComputation.attr.PARTITIONER</name>
+    <value>com.datatorrent.common.partitioner.StatelessPartitioner:8</value>
+  </property>
+  <property>
+    <name>dt.application.adTechDemo.operator.DimensionsComputation.attr.MEMORY_MB</name>
+    <value>16384</value>
+  </property>
+  <property>
+    <name>dt.port.*.attr.QUEUE_CAPACITY</name>
+    <value>32000</value>
+  </property>
+  <property>
+    <name>dt.application.adTechDemo.operator.Store.embeddableQueryInfoProvider.topic</name>
+    <value>AdTechDemo</value>
+  </property>
+  <property>
+    <name>dt.operator.QueryResult.topic</name>
+    <value>AdTechDemoQueryResult</value>
   </property>
 
 </configuration>

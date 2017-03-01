@@ -15,6 +15,7 @@ import com.datatorrent.api.DAG.Locality;
 import com.datatorrent.api.StreamingApplication;
 import com.datatorrent.api.annotation.ApplicationAnnotation;
 import com.datatorrent.lib.appdata.schemas.SchemaUtils;
+import com.datatorrent.lib.io.ConsoleOutputOperator;
 
 @ApplicationAnnotation(name = "KafkaDataGenerator")
 public class DataToKafkaGenApplication implements StreamingApplication
@@ -45,7 +46,7 @@ public class DataToKafkaGenApplication implements StreamingApplication
       KafkaSinglePortExactlyOnceOutputOperator.class);
 
     Properties props = new Properties();
-    props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+    props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "node18.morado.com:9092");
     // Kafka's Key field is used by KafkaSinglePortExactlyOnceOutputOperator to implement exactly once property
     props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
     props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");

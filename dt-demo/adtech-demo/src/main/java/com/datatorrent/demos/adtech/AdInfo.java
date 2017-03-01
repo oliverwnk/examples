@@ -220,6 +220,24 @@ public class AdInfo implements Serializable
     this.time = time;
   }
 
+  @Override
+  public String toString()
+  {
+    return "AdInfo{" +
+      "publisher='" + publisher + '\'' +
+      ", publisherID=" + publisherID +
+      ", advertiser='" + advertiser + '\'' +
+      ", advertiserID=" + advertiserID +
+      ", location='" + location + '\'' +
+      ", locationID=" + locationID +
+      ", cost=" + cost +
+      ", revenue=" + revenue +
+      ", impressions=" + impressions +
+      ", clicks=" + clicks +
+      ", time=" + time +
+      '}';
+  }
+
   public static class AdInfoAggregator implements Aggregator<AdInfo, AdInfoAggregateEvent>
   {
     String dimension;

@@ -184,11 +184,10 @@ public class InputItemGenerator implements InputOperator
 
   private void buildAndSendString(boolean click, int publisherId, int advertiserId, int adUnit, double value, long timestamp)
   {
-    String publisher = (String)publisherName.get(publisherId);
-    //adInfo.publisherID = publisherId;
-    String advertiser = (String)advertiserName.get(advertiserId);
-    //adInfo.advertiserID = advertiserId;
-    String location = (String)locationName.get(adUnit);
+    String publisher = "";
+    String advertiser = "";
+    String location = "";
+
     int locationId = adUnit;
     double revenue = 0;
     double cost = 0;
@@ -202,9 +201,8 @@ public class InputItemGenerator implements InputOperator
       cost = value;
       impression = 1;
     }
-    //adInfo.setTime(timestamp);
     String adInfoString = publisher + "," + publisherId + "," + advertiser + "," + advertiserId + "," + location + ","
-      + locationId + "," + cost + "," + revenue + "," + impression + "," + clicks + "," + timestamp;
+        + locationId + "," + cost + "," + revenue + "," + impression + "," + clicks + "," + timestamp;
     emitTuple(adInfoString);
   }
 

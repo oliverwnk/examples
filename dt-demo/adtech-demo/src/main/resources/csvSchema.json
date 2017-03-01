@@ -35,11 +35,11 @@
       "type":"double"
     },
     {
-      "name":"clicks",
+      "name":"impressions",
       "type":"long"
     },
     {
-      "name":"impressions",
+      "name":"clicks",
       "type":"long"
     },
     {
