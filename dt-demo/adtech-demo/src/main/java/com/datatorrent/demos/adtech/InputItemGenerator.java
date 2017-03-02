@@ -206,28 +206,6 @@ public class InputItemGenerator implements InputOperator
     emitTuple(adInfoString);
   }
 
-  private void buildAndSend(boolean click, int publisherId, int advertiserId, int adUnit, double value, long timestamp)
-  {
-    AdInfo adInfo = new AdInfo();
-
-    adInfo.setPublisher((String)publisherName.get(publisherId));
-    adInfo.publisherID = publisherId;
-    adInfo.setAdvertiser((String)advertiserName.get(advertiserId));
-    adInfo.advertiserID = advertiserId;
-    adInfo.setLocation((String)locationName.get(adUnit));
-    adInfo.locationID = adUnit;
-
-    if (click) {
-      adInfo.setRevenue(value);
-      adInfo.setClicks(1L);
-    } else {
-      adInfo.setCost(value);
-      adInfo.setImpressions(1);
-    }
-    adInfo.setTime(timestamp);
-    //emitTuple(adInfo);
-  }
-
   public void emitTuple(String adInfo)
   {
     this.outputPort.emit(adInfo);

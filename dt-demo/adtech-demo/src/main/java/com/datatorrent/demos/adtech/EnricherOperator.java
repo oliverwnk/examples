@@ -11,9 +11,6 @@ import com.datatorrent.common.util.BaseOperator;
 import com.datatorrent.lib.appdata.schemas.DimensionalConfigurationSchema;
 import com.datatorrent.lib.appdata.schemas.SchemaUtils;
 
-/**
- * Created by oliver on 2/28/17.
- */
 public class EnricherOperator extends BaseOperator
 {
   private transient DimensionalConfigurationSchema schema;
@@ -27,7 +24,7 @@ public class EnricherOperator extends BaseOperator
   public void setup(Context.OperatorContext context)
   {
     AggregatorRegistry.DEFAULT_AGGREGATOR_REGISTRY.setup();
-    //get list of locations from csvSchema.json to enrich locationID to also locationName
+    //get list of locations from csvSchema.json to enrich publisher, advertiser and location
     String schemaJson = SchemaUtils.jarResourceFileToString("adsGenericEventSchema.json");
     schema = new DimensionalConfigurationSchema(schemaJson, AggregatorRegistry.DEFAULT_AGGREGATOR_REGISTRY);
     publisherNames = schema.getKeysToEnumValuesList().get("publisher");

@@ -6,9 +6,6 @@ import com.datatorrent.api.DefaultInputPort;
 import com.datatorrent.api.DefaultOutputPort;
 import com.datatorrent.common.util.BaseOperator;
 
-/**
- * Created by oliver on 2/28/17.
- */
 public class FilterOperator extends BaseOperator
 {
   public final transient DefaultOutputPort<AdInfo> filteredOutput = new DefaultOutputPort<>();

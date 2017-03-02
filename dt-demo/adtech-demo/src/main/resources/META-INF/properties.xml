@@ -1,25 +1,16 @@
 <?xml version="1.0"?>
 <configuration>
-  <!-- 
-  <property>
-    <name>dt.application.{appName}.operator.{opName}.prop.{propName}</name>
-    <value>some-default-value (if value is not specified, it is required from the user or custom config when launching)</value>
-  </property>
-  -->
-  <!-- memory assigned to app master
-  <property>
-    <name>dt.attr.MASTER_MEMORY_MB</name>
-    <value>1024</value>
-  </property>
-  -->
+  <!-- KafkaDataGenerator -->
   <property>
     <name>dt.application.KafkaDataGenerator.operator.InputGenerator.numTuplesPerWindow</name>
-    <value>2500</value>
+    <value>100000</value>
   </property>
   <property>
     <name>dt.application.KafkaDataGenerator.operator.kafkaOutput.prop.topic</name>
     <value>adtech</value>
   </property>
+
+  <!-- adTechDemo Application -->
   <property>
     <name>dt.application.adTechDemo.operator.kafkaInput.prop.topics</name>
     <value>adtech</value>
@@ -44,11 +35,7 @@
   </property>
   <property>
     <name>dt.application.adTechDemo.operator.DimensionsComputation.attr.MEMORY_MB</name>
-    <value>16384</value>
-  </property>
-  <property>
-    <name>dt.port.*.attr.QUEUE_CAPACITY</name>
-    <value>32000</value>
+    <value>6000</value>
   </property>
   <property>
     <name>dt.application.adTechDemo.operator.Store.embeddableQueryInfoProvider.topic</name>
@@ -58,6 +45,5 @@
     <name>dt.operator.QueryResult.topic</name>
     <value>AdTechDemoQueryResult</value>
   </property>
-
 </configuration>
 

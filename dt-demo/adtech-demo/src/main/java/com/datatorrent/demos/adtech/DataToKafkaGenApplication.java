@@ -15,7 +15,6 @@ import com.datatorrent.api.DAG.Locality;
 import com.datatorrent.api.StreamingApplication;
 import com.datatorrent.api.annotation.ApplicationAnnotation;
 import com.datatorrent.lib.appdata.schemas.SchemaUtils;
-import com.datatorrent.lib.io.ConsoleOutputOperator;
 
 @ApplicationAnnotation(name = "KafkaDataGenerator")
 public class DataToKafkaGenApplication implements StreamingApplication
@@ -29,22 +28,17 @@ public class DataToKafkaGenApplication implements StreamingApplication
   @Override
   public void populateDAG(DAG dag, Configuration conf)
   {
-    // Sample DAG with 2 operators
-    // Replace this code with the DAG you want to build
     String eventSchema = SchemaUtils.jarResourceFileToString(eventSchemaLocation);
 
-    if (inputOperator == null) {
-      InputItemGenerator input = dag.addOperator("InputGenerator", InputItemGenerator.class);
-      input.advertiserName = advertisers;
-      input.setEventSchemaJSON(eventSchema);
-      inputOperator = input;
-    } else {
-      dag.addOperator("InputGenerator", inputOperator);
-    }
+    InputItemGenerator input = dag.addOperator("InputGenerator", InputItemGenerator.class);
+    input.advertiserName = advertisers;
+    input.setEventSchemaJSON(eventSchema);
+    inputOperator = input;
 
     KafkaSinglePortExactlyOnceOutputOperator<String> kafkaOutput = dag.addOperator("kafkaOutput",
-      KafkaSinglePortExactlyOnceOutputOperator.class);
+        KafkaSinglePortExactlyOnceOutputOperator.class);
 
+    //Set properties for KafkaSinglePortExactlyOnceOutputOperator
     Properties props = new Properties();
     props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "node18.morado.com:9092");
     // Kafka's Key field is used by KafkaSinglePortExactlyOnceOutputOperator to implement exactly once property
@@ -52,10 +46,8 @@ public class DataToKafkaGenApplication implements StreamingApplication
     props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
     props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
     props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-
     kafkaOutput.setProperties(props);
 
-    //ConsoleOutputOperator cons = dag.addOperator("console", ConsoleOutputOperator.class);
     dag.addStream("inputData", inputOperator.getOutputPort(), kafkaOutput.inputPort).setLocality(Locality.CONTAINER_LOCAL);
   }
 }
