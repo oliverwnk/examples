@@ -1,0 +1,15 @@
+{"locationID":0, "location":"N"}
+{"locationID":1, "location":"LREC"}
+{"locationID":2, "location":"SKY"}
+{"locationID":3, "location":"AL"}
+{"locationID":4, "location":"AK"}
+{"locationID":5, "location":"AZ"}
+{"locationID":6, "location":"AR"}
+{"locationID":7, "location":"CA"}
+{"locationID":8, "location":"CO"}
+{"locationID":9, "location":"CT"}
+{"locationID":10, "location":"DE"}
+{"locationID":11, "location":"FL"}
+{"locationID":12, "location":"GA"}
+{"locationID":13, "location":"HI"}
+{"locationID":14, "location":"ID"}

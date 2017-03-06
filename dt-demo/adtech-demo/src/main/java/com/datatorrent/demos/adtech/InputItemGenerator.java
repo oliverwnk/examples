@@ -184,8 +184,8 @@ public class InputItemGenerator implements InputOperator
 
   private void buildAndSendString(boolean click, int publisherId, int advertiserId, int adUnit, double value, long timestamp)
   {
-    String publisher = "";
-    String advertiser = "";
+    String publisher = (String)publisherName.get(publisherId);
+    String advertiser = (String)advertiserName.get(advertiserId);
     String location = "";
 
     int locationId = adUnit;

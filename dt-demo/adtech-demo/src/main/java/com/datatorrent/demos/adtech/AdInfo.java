@@ -7,9 +7,6 @@ package com.datatorrent.demos.adtech;
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.apex.malhar.lib.dimensions.aggregator.AggregateEvent;
 import org.apache.apex.malhar.lib.dimensions.aggregator.AggregateEvent.Aggregator;
 
@@ -24,7 +21,6 @@ import com.datatorrent.lib.appdata.schemas.TimeBucket;
  */
 public class AdInfo implements Serializable
 {
-  private static final long serialVersionUID = 201505250652L;
 
   public String publisher;
   public int publisherID;
@@ -110,8 +106,7 @@ public class AdInfo implements Serializable
   }
 
   /**
-   * @param advertiser
-   *          the advertiser to set
+   * @param advertiser the advertiser to set
    */
   public void setAdvertiser(String advertiser)
   {
@@ -127,8 +122,7 @@ public class AdInfo implements Serializable
   }
 
   /**
-   * @param location
-   *          the location to set
+   * @param location the location to set
    */
   public void setLocation(String location)
   {
@@ -144,8 +138,7 @@ public class AdInfo implements Serializable
   }
 
   /**
-   * @param cost
-   *          the cost to set
+   * @param cost the cost to set
    */
   public void setCost(double cost)
   {
@@ -161,8 +154,7 @@ public class AdInfo implements Serializable
   }
 
   /**
-   * @param revenue
-   *          the revenue to set
+   * @param revenue the revenue to set
    */
   public void setRevenue(double revenue)
   {
@@ -178,8 +170,7 @@ public class AdInfo implements Serializable
   }
 
   /**
-   * @param impressions
-   *          the impressions to set
+   * @param impressions the impressions to set
    */
   public void setImpressions(long impressions)
   {
@@ -195,8 +186,7 @@ public class AdInfo implements Serializable
   }
 
   /**
-   * @param clicks
-   *          the clicks to set
+   * @param clicks the clicks to set
    */
   public void setClicks(long clicks)
   {
@@ -212,8 +202,7 @@ public class AdInfo implements Serializable
   }
 
   /**
-   * @param time
-   *          the time to set
+   * @param time the time to set
    */
   public void setTime(long time)
   {
@@ -277,7 +266,7 @@ public class AdInfo implements Serializable
 
     /**
      * Dimension specification for display in operator properties.
-     * 
+     *
      * @return The dimension.
      */
     public String getDimension()
@@ -480,8 +469,7 @@ public class AdInfo implements Serializable
     }
 
     /**
-     * @param dimensionsDescriptorID
-     *          the dimensionsDescriptorID to set
+     * @param dimensionsDescriptorID the dimensionsDescriptorID to set
      */
     public void setDimensionsDescriptorID(int dimensionsDescriptorID)
     {
@@ -511,9 +499,11 @@ public class AdInfo implements Serializable
       AdInfoAggregateEvent aae = (AdInfoAggregateEvent)o;
 
       return this.publisherID == aae.publisherID && this.advertiserID == aae.advertiserID
-          && this.locationID == aae.locationID && this.time == aae.time && this.timeBucket == aae.timeBucket;
+        && this.locationID == aae.locationID && this.time == aae.time && this.timeBucket == aae.timeBucket;
     }
   }
 
-  private static final Logger LOG = LoggerFactory.getLogger(AdInfoAggregateEvent.class);
+  //private static final Logger LOG = LoggerFactory.getLogger(AdInfoAggregateEvent.class);
+  //private static final long serialVersionUID = 201505250652L;
+
 }

@@ -1,5 +1,6 @@
 package com.datatorrent.demos.adtech;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.apache.apex.malhar.kafka.KafkaSinglePortInputOperator;
@@ -12,10 +13,14 @@ import com.datatorrent.api.DAG;
 import com.datatorrent.api.StreamingApplication;
 import com.datatorrent.api.annotation.ApplicationAnnotation;
 import com.datatorrent.contrib.dimensions.AppDataSingleSchemaDimensionStoreHDHT;
-import com.datatorrent.contrib.hdht.tfile.TFileImpl;
+import com.datatorrent.contrib.enrich.JsonFSLoader;
+import com.datatorrent.contrib.enrich.POJOEnricher;
 import com.datatorrent.contrib.parser.CsvParser;
 import com.datatorrent.lib.appdata.schemas.SchemaUtils;
 import com.datatorrent.lib.dimensions.DimensionsComputationFlexibleSingleSchemaPOJO;
+import com.datatorrent.lib.fileaccess.TFileImpl;
+import com.datatorrent.lib.filter.FilterOperator;
+import com.datatorrent.lib.io.ConsoleOutputOperator;
 import com.datatorrent.lib.io.PubSubWebSocketAppDataQuery;
 import com.datatorrent.lib.io.PubSubWebSocketAppDataResult;
 import com.datatorrent.lib.statistics.DimensionsComputationUnifierImpl;
@@ -33,8 +38,18 @@ public class AdTechApplication implements StreamingApplication
     KafkaSinglePortInputOperator kafkaInput = dag.addOperator("kafkaInput", KafkaSinglePortInputOperator.class);
     CsvParser csvParser = dag.addOperator("csvParser", new CsvParser());
     csvParser.setSchema(SchemaUtils.jarResourceFileToString("csvSchema.json"));
-    FilterOperator filterDate = dag.addOperator("filterDate", FilterOperator.class);
-    EnricherOperator enrichLocation = dag.addOperator("enrichLocation", EnricherOperator.class);
+    FilterOperator filterLocation = dag.addOperator("filterLocation", FilterOperator.class);
+
+    JsonFSLoader fsLoader = new JsonFSLoader();
+    POJOEnricher enrich = dag.addOperator("Enrich", POJOEnricher.class);
+    enrich.setStore(fsLoader);
+
+    ArrayList includeFields = new ArrayList();
+    includeFields.add("location");
+    ArrayList lookupFields = new ArrayList();
+    lookupFields.add("locationID");
+    enrich.setIncludeFields(includeFields);
+    enrich.setLookupFields(lookupFields);
 
     DimensionsComputationFlexibleSingleSchemaPOJO dimensions = dag.addOperator("DimensionsComputation", DimensionsComputationFlexibleSingleSchemaPOJO.class);
     AppDataSingleSchemaDimensionStoreHDHT store = dag.addOperator("Store", AppDataSingleSchemaDimensionStoreHDHT.class);
@@ -67,13 +82,14 @@ public class AdTechApplication implements StreamingApplication
     PubSubWebSocketAppDataResult wsOut = dag.addOperator("QueryResult", new PubSubWebSocketAppDataResult());
 
     dag.addStream("kafkaInputStream", kafkaInput.outputPort, csvParser.in);
-    dag.addStream("parsedAdInfoObj", csvParser.out, filterDate.input);
-    dag.addStream("filteredStream", filterDate.filteredOutput, enrichLocation.input);
-    //dag.addStream("outsortedToHDFS", filterDate.outSortedOutput, console.input);
+    dag.addStream("parsedAdInfoObj", csvParser.out, filterLocation.input);
+    dag.addStream("filteredStream", filterLocation.truePort, enrich.input);
 
-    dag.addStream("InputStream", enrichLocation.output, dimensions.input);
+    ConsoleOutputOperator consoleFiltered = dag.addOperator("consoleFiltered", ConsoleOutputOperator.class);
+    dag.addStream("outsorted", filterLocation.falsePort, consoleFiltered.input);
+
+    dag.addStream("InputStream", enrich.output, dimensions.input);
     dag.addStream("DimensionalData", dimensions.output, store.input);
     dag.addStream("QueryResult", store.queryResult, wsOut.input);
-
   }
 }

@@ -62,6 +62,7 @@ public class ApplicationTest
   {
     Configuration conf = new Configuration(false);
     conf.addResource(this.getClass().getResourceAsStream("/META-INF/properties.xml"));
+    conf.set("dt.application.adTechDemo.operator.Enrich.prop.store.fileName", "src/main/resources/enrichMapping.txt");
     return conf;
   }
 
