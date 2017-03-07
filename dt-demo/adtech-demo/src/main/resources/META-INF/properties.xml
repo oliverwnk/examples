@@ -69,11 +69,11 @@
   </property>
   <property>
     <name>dt.application.adTechDemo.operator.DimensionsComputation.attr.PARTITIONER</name>
-    <value>com.datatorrent.common.partitioner.StatelessPartitioner:8</value>
+    <value>com.datatorrent.common.partitioner.StatelessPartitioner:4</value>
   </property>
   <property>
     <name>dt.application.adTechDemo.operator.DimensionsComputation.attr.MEMORY_MB</name>
-    <value>6000</value>
+    <value>2048</value>
   </property>
   <property>
     <name>dt.application.adTechDemo.operator.Store.embeddableQueryInfoProvider.topic</name>
@@ -94,15 +94,12 @@
     <name>dt.application.adTechDemo.operator.Enrich.attr.MEMORY_MB</name>
     <value>2048</value>
   </property>
-  <property>
-    <name>dt.application.adTechDemo.operator.csvParser.attr.MEMORY_MB</name>
-    <value>2048</value>
-  </property>
+
 
   <!-- CsvParser -->
   <property>
-    <name>dt.application.adTechDemo.operator.csvParser.attr.PARTITIONER</name>
-    <value>com.datatorrent.common.partitioner.StatelessPartitioner:2</value>
+    <name>dt.application.adTechDemo.operator.csvParser.attr.MEMORY_MB</name>
+    <value>2048</value>
   </property>
 </configuration>
 
