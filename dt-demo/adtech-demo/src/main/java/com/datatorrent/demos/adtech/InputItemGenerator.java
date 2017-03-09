@@ -17,13 +17,14 @@ import org.apache.apex.malhar.lib.dimensions.aggregator.AggregatorRegistry;
 import com.datatorrent.api.Context.OperatorContext;
 import com.datatorrent.api.DefaultOutputPort;
 import com.datatorrent.api.InputOperator;
+import com.datatorrent.api.annotation.Stateless;
 import com.datatorrent.lib.appdata.schemas.DimensionalConfigurationSchema;
 
 /**
  * @category Test Bench
  * @since 3.1.0
  */
-
+@Stateless
 public class InputItemGenerator implements InputOperator
 {
   private String eventSchemaJSON;

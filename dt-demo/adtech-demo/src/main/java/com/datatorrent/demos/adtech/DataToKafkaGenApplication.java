@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.apex.malhar.kafka.KafkaSinglePortExactlyOnceOutputOperator;
+import org.apache.apex.malhar.kafka.KafkaSinglePortOutputOperator;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.kafka.clients.producer.ProducerConfig;
 
@@ -14,6 +15,7 @@ import com.datatorrent.api.DAG;
 import com.datatorrent.api.DAG.Locality;
 import com.datatorrent.api.StreamingApplication;
 import com.datatorrent.api.annotation.ApplicationAnnotation;
+import com.datatorrent.api.annotation.Stateless;
 import com.datatorrent.lib.appdata.schemas.SchemaUtils;
 
 @ApplicationAnnotation(name = "KafkaDataGenerator")
@@ -34,11 +36,11 @@ public class DataToKafkaGenApplication implements StreamingApplication
     input.advertiserName = advertisers;
     input.setEventSchemaJSON(eventSchema);
     inputOperator = input;
+    KafkaSinglePortOutputOperator<String, String> kafkaOutput = dag.addOperator("kafkaOutput",
+      KafkaSinglePortOutputOperator.class);
 
-    KafkaSinglePortExactlyOnceOutputOperator<String> kafkaOutput = dag.addOperator("kafkaOutput",
-        KafkaSinglePortExactlyOnceOutputOperator.class);
 
-    //Set properties for KafkaSinglePortExactlyOnceOutputOperator
+    //Set properties for KafkaSinglePortOutputOperator
     Properties props = new Properties();
     props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "node18.morado.com:9092");
     // Kafka's Key field is used by KafkaSinglePortExactlyOnceOutputOperator to implement exactly once property

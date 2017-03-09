@@ -10,6 +10,7 @@
     <value>-Xloggc:&lt;LOG_DIR&gt;/gc.log -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps</value>
   </property>
 
+
   <!-- KafkaDataGenerator -->
   <property>
     <name>dt.application.KafkaDataGenerator.operator.InputGenerator.numTuplesPerWindow</name>
@@ -19,16 +20,20 @@
     <name>dt.application.KafkaDataGenerator.operator.kafkaOutput.prop.topic</name>
     <value>adtech</value>
   </property>
-
+  <property>
+    <name>dt.application.KafkaDataGenerator.operator.kafkaOutput.attr.STATELESS</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>dt.application.KafkaDataGenerator.operator.InputGenerator.attr.PARTITIONER</name>
+    <value>com.datatorrent.common.partitioner.StatelessPartitioner:1</value>
+  </property>
+  <property>
+    <name>dt.application.KafkaDataGenerator.operator.kafkaOutput.port.inputPort.attr.PARTITION_PARALLEL</name>
+    <value>true</value>
+  </property>
   <!-- adTechDemo Application -->
-  <property>
-    <name>dt.application.adTechDemo.operator.kafkaInput.prop.topics</name>
-    <value>adtech</value>
-  </property>
-  <property>
-    <name>dt.application.adTechDemo.operator.kafkaInput.prop.clusters</name>
-    <value>node18.morado.com:9092</value>  <!-- broker (NOT zookeeper) address -->
-  </property>
+
   <property>
     <name>dt.application.adTechDemo.operator.csvParser.port.out.attr.TUPLE_CLASS</name>
     <value>com.datatorrent.demos.adtech.AdInfo</value>
@@ -89,12 +94,22 @@
     <name>dt.application.adTechDemo.operator.kafkaInput.attr.MEMORY_MB</name>
     <value>2048</value>
   </property>
-
   <property>
     <name>dt.application.adTechDemo.operator.Enrich.attr.MEMORY_MB</name>
     <value>2048</value>
   </property>
-
+  <property>
+    <name>dt.application.adTechDemo.operator.kafkaInput.prop.topics</name>
+    <value>adtech</value>
+  </property>
+  <property>
+    <name>dt.application.adTechDemo.operator.kafkaInput.prop.clusters</name>
+    <value>node18.morado.com:9092</value>  <!-- broker (NOT zookeeper) address -->
+  </property>
+  <property>
+    <name>dt.application.adTechDemo.operator.kafkaInput.prop.initialOffset</name>
+    <value>LATEST</value>  <!-- broker (NOT zookeeper) address -->
+  </property>
 
   <!-- CsvParser -->
   <property>
