@@ -66,6 +66,10 @@
     <name>dt.application.adTechDemo.operator.Enrich.prop.store.fileName</name>
     <value>/tmp/enrichMapping.txt</value>
   </property>
+  <property>
+    <name>dt.application.adTechDemo.operator.Enrich.attr.MEMORY_MB</name>
+    <value>2048</value>
+  </property>
 
   <!-- dimensions computing -->
   <property>
@@ -92,10 +96,6 @@
   <!-- kafkainput operator -->
   <property>
     <name>dt.application.adTechDemo.operator.kafkaInput.attr.MEMORY_MB</name>
-    <value>2048</value>
-  </property>
-  <property>
-    <name>dt.application.adTechDemo.operator.Enrich.attr.MEMORY_MB</name>
     <value>2048</value>
   </property>
   <property>
