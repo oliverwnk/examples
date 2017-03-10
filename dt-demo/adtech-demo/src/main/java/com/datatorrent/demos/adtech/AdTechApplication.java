@@ -81,6 +81,8 @@ public class AdTechApplication implements StreamingApplication
     store.setEmbeddableQueryInfoProvider(new PubSubWebSocketAppDataQuery());
     PubSubWebSocketAppDataResult wsOut = dag.addOperator("QueryResult", new PubSubWebSocketAppDataResult());
 
+    ConsoleOutputOperator console = dag.addOperator("cons", ConsoleOutputOperator.class);
+
     dag.addStream("kafkaInputStream", kafkaInput.outputPort, csvParser.in).setLocality(DAG.Locality.CONTAINER_LOCAL);
     dag.addStream("parsedAdInfoObj", csvParser.out, filterLocation.input).setLocality(DAG.Locality.CONTAINER_LOCAL);
     dag.addStream("filteredStream", filterLocation.truePort, enrich.input).setLocality(DAG.Locality.CONTAINER_LOCAL);
@@ -88,7 +90,7 @@ public class AdTechApplication implements StreamingApplication
     ConsoleOutputOperator consoleFiltered = dag.addOperator("consoleFiltered", ConsoleOutputOperator.class);
     dag.addStream("outsorted", filterLocation.falsePort, consoleFiltered.input).setLocality(DAG.Locality.CONTAINER_LOCAL);
 
-    dag.addStream("InputStream", enrich.output, dimensions.input);
+    dag.addStream("InputStream", enrich.output, console.input, dimensions.input);
     dag.addStream("DimensionalData", dimensions.output, store.input);
     dag.addStream("QueryResult", store.queryResult, wsOut.input);
   }
