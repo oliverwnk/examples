@@ -85,7 +85,7 @@ public class AdTechApplication implements StreamingApplication
 
     dag.addStream("kafkaInputStream", kafkaInput.outputPort, csvParser.in).setLocality(DAG.Locality.CONTAINER_LOCAL);
     dag.addStream("parsedAdInfoObj", csvParser.out, filterLocation.input).setLocality(DAG.Locality.CONTAINER_LOCAL);
-    dag.addStream("filteredStream", filterLocation.truePort, enrich.input).setLocality(DAG.Locality.CONTAINER_LOCAL);
+    dag.addStream("filteredStream", filterLocation.truePort, enrich.input);
 
     ConsoleOutputOperator consoleFiltered = dag.addOperator("consoleFiltered", ConsoleOutputOperator.class);
     dag.addStream("outsorted", filterLocation.falsePort, consoleFiltered.input).setLocality(DAG.Locality.CONTAINER_LOCAL);
