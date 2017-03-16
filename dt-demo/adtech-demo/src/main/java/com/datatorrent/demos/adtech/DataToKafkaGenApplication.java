@@ -1,21 +1,14 @@
-/**
- * Put your copyright and license info here.
- */
 package com.datatorrent.demos.adtech;
 
 import java.util.List;
-import java.util.Properties;
 
-import org.apache.apex.malhar.kafka.KafkaSinglePortExactlyOnceOutputOperator;
 import org.apache.apex.malhar.kafka.KafkaSinglePortOutputOperator;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.kafka.clients.producer.ProducerConfig;
 
 import com.datatorrent.api.DAG;
 import com.datatorrent.api.DAG.Locality;
 import com.datatorrent.api.StreamingApplication;
 import com.datatorrent.api.annotation.ApplicationAnnotation;
-import com.datatorrent.api.annotation.Stateless;
 import com.datatorrent.lib.appdata.schemas.SchemaUtils;
 
 @ApplicationAnnotation(name = "KafkaDataGenerator")
@@ -37,19 +30,9 @@ public class DataToKafkaGenApplication implements StreamingApplication
     input.setEventSchemaJSON(eventSchema);
     inputOperator = input;
     KafkaSinglePortOutputOperator<String, String> kafkaOutput = dag.addOperator("kafkaOutput",
-      KafkaSinglePortOutputOperator.class);
+        KafkaSinglePortOutputOperator.class);
 
-
-    //Set properties for KafkaSinglePortOutputOperator
-    Properties props = new Properties();
-    props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "node18.morado.com:9092");
-    // Kafka's Key field is used by KafkaSinglePortExactlyOnceOutputOperator to implement exactly once property
-    props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
-    props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
-    props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-    props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-    kafkaOutput.setProperties(props);
-
-    dag.addStream("inputData", inputOperator.getOutputPort(), kafkaOutput.inputPort).setLocality(Locality.CONTAINER_LOCAL);
+    dag.addStream("inputData", inputOperator.getOutputPort(), kafkaOutput.inputPort)
+      .setLocality(Locality.CONTAINER_LOCAL);
   }
 }

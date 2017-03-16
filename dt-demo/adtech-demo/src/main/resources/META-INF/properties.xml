@@ -13,6 +13,18 @@
 
   <!-- KafkaDataGenerator -->
   <property>
+    <name>dt.application.KafkaDataGenerator.operator.kafkaOutput.prop.properties(bootstrap.servers)</name>
+    <value>node18.morado.com:9092</value>
+  </property>
+  <property>
+    <name>dt.application.KafkaDataGenerator.operator.kafkaOutput.prop.properties(key.serializer)</name>
+    <value>org.apache.kafka.common.serialization.StringSerializer</value>
+  </property>
+  <property>
+    <name>dt.application.KafkaDataGenerator.operator.kafkaOutput.prop.properties(value.serializer)</name>
+    <value>org.apache.kafka.common.serialization.StringSerializer</value>
+  </property>
+  <property>
     <name>dt.application.KafkaDataGenerator.operator.InputGenerator.numTuplesPerWindow</name>
     <value>100000</value>
   </property>
@@ -68,7 +80,15 @@
   </property>
   <property>
     <name>dt.application.adTechDemo.operator.Enrich.attr.MEMORY_MB</name>
-    <value>2048</value>
+    <value>4096</value>
+  </property>
+  <property>
+    <name>dt.application.adTechDemo.operator.Enrich.attr.STATELESS</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>dt.application.adTechDemo.operator.Enrich.attr.PARTITIONER</name>
+    <value>com.datatorrent.common.partitioner.StatelessPartitioner:2</value>
   </property>
 
   <!-- dimensions computing -->
@@ -82,7 +102,7 @@
   </property>
   <property>
     <name>dt.application.adTechDemo.operator.DimensionsComputation.attr.MEMORY_MB</name>
-    <value>2048</value>
+    <value>4096</value>
   </property>
   <property>
     <name>dt.application.adTechDemo.operator.Store.embeddableQueryInfoProvider.topic</name>
@@ -115,6 +135,20 @@
   <property>
     <name>dt.application.adTechDemo.operator.csvParser.attr.MEMORY_MB</name>
     <value>2048</value>
+  </property>
+
+  <!-- Store -->
+  <property>
+    <name>dt.application.adTechDemo.operator.Store.attr.MEMORY_MB</name>
+    <value>4096</value>
+  </property>
+  <property>
+    <name>dt.application.adTechDemo.operator.Store.attr.PARTITIONER</name>
+    <value>com.datatorrent.common.partitioner.StatelessPartitioner:8</value>
+  </property>
+  <property>
+    <name>dt.application.adTechDemo.operator.Store.port.input.attr.PARTITION_PARALLEL</name>
+    <value>true</value>
   </property>
 </configuration>
 

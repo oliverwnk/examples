@@ -26,7 +26,7 @@ import com.datatorrent.lib.io.PubSubWebSocketAppDataResult;
 import com.datatorrent.lib.statistics.DimensionsComputationUnifierImpl;
 
 @ApplicationAnnotation(name = "adTechDemo")
-public class AdTechApplication implements StreamingApplication
+public class  AdTechApplication implements StreamingApplication
 {
   public static final String EVENT_SCHEMA = "adsGenericEventSchema.json";
 
