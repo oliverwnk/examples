@@ -3,7 +3,7 @@
 
   <property>
     <name>dt.port.*.attr.QUEUE_CAPACITY</name>
-    <value>8000</value>
+    <value>16000</value>
   </property>
   <property>
     <name>dt.attr.CONTAINER_JVM_OPTIONS</name>
@@ -88,21 +88,23 @@
   </property>
   <property>
     <name>dt.application.adTechDemo.operator.Enrich.attr.PARTITIONER</name>
-    <value>com.datatorrent.common.partitioner.StatelessPartitioner:2</value>
+    <value>com.datatorrent.common.partitioner.StatelessPartitioner:1</value>
   </property>
 
   <!-- dimensions computing -->
+  <!--
   <property>
     <name>dt.application.adTechDemo.operator.Store.fileStore.basePath</name>
     <value>AdsDimensionsDemo/Store</value>
   </property>
+  -->
   <property>
     <name>dt.application.adTechDemo.operator.DimensionsComputation.attr.PARTITIONER</name>
-    <value>com.datatorrent.common.partitioner.StatelessPartitioner:4</value>
+    <value>com.datatorrent.common.partitioner.StatelessPartitioner:16</value>
   </property>
   <property>
     <name>dt.application.adTechDemo.operator.DimensionsComputation.attr.MEMORY_MB</name>
-    <value>4096</value>
+    <value>2048</value>
   </property>
   <property>
     <name>dt.application.adTechDemo.operator.Store.embeddableQueryInfoProvider.topic</name>
@@ -134,21 +136,30 @@
   <!-- CsvParser -->
   <property>
     <name>dt.application.adTechDemo.operator.csvParser.attr.MEMORY_MB</name>
-    <value>2048</value>
+    <value>1024</value>
   </property>
 
   <!-- Store -->
   <property>
     <name>dt.application.adTechDemo.operator.Store.attr.MEMORY_MB</name>
-    <value>4096</value>
+    <value>2048</value>
   </property>
+  <!--
+
   <property>
     <name>dt.application.adTechDemo.operator.Store.attr.PARTITIONER</name>
-    <value>com.datatorrent.common.partitioner.StatelessPartitioner:8</value>
+    <value>com.datatorrent.common.partitioner.StatelessPartitioner:2</value>
   </property>
-  <property>
-    <name>dt.application.adTechDemo.operator.Store.port.input.attr.PARTITION_PARALLEL</name>
-    <value>true</value>
-  </property>
+
+
+<property>
+  <name>dt.application.adTechDemo.operator.Store.input.attr.APPLICATION_WINDOW_COUNT</name>
+  <value>10</value>
+</property>
+<property>
+  <name>dt.application.adTechDemo.operator.Store.port.input.attr.PARTITION_PARALLEL</name>
+  <value>true</value>
+</property>
+-->
 </configuration>
 
