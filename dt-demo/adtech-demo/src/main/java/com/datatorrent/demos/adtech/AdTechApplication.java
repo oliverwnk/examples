@@ -76,14 +76,17 @@ public class  AdTechApplication implements StreamingApplication
     dimensions.setAggregateToExpression(aggregateToExpression);
     dimensions.setConfigurationSchemaJSON(eventSchema);
 
+
     dimensions.setUnifier(new DimensionsComputationUnifierImpl<DimensionsEvent.InputEvent, DimensionsEvent.Aggregate>());
     dag.getMeta(dimensions).getMeta(dimensions.output).getUnifierMeta().getAttributes().put(Context.OperatorContext.MEMORY_MB,
         8092);
 
     //Set store properties
     AppDataSingleSchemaDimensionStoreHDHT store = dag.addOperator("Store", AppDataSingleSchemaDimensionStoreHDHT.class);
-    dag.setOperatorAttribute(store, Context.OperatorContext.APPLICATION_WINDOW_COUNT, 4);
-    dag.setOperatorAttribute(store, Context.OperatorContext.CHECKPOINT_WINDOW_COUNT, 4);
+    dag.setOperatorAttribute(store, Context.OperatorContext.APPLICATION_WINDOW_COUNT, 16);
+    dag.setOperatorAttribute(store, Context.OperatorContext.CHECKPOINT_WINDOW_COUNT, 16);
+    AggregateStreamCodec codec = new AggregateStreamCodec();
+    dag.setInputPortAttribute(store.input, Context.PortContext.STREAM_CODEC, codec);
 
     //store.setUpdateEnumValues(true);
     TFileImpl hdsFile = new TFileImpl.DTFileImpl();
@@ -93,8 +96,8 @@ public class  AdTechApplication implements StreamingApplication
     //  new BasicCounters.LongAggregator<MutableLong>());
     store.setConfigurationSchemaJSON(eventSchema);
 
-    store.setNumberOfBuckets(16);
-    store.setPartitionCount(16);
+    store.setNumberOfBuckets(4);
+    store.setPartitionCount(4);
 
     //PubSubWebSocketAppDataQuery query = new PubSubWebSocketAppDataQuery();
     //URI queryUri = ConfigUtil.getAppDataQueryPubSubURI(dag, conf);
@@ -102,6 +105,7 @@ public class  AdTechApplication implements StreamingApplication
     store.setEmbeddableQueryInfoProvider(new PubSubWebSocketAppDataQuery());
     PubSubWebSocketAppDataResult wsOut = dag.addOperator("QueryResult", new PubSubWebSocketAppDataResult());
 
+    dag.setOutputPortAttribute(dimensions.output, Context.PortContext.UNIFIER_LIMIT, 2);
 
 
     store.setQueryResultUnifier(new DimensionStoreHDHTNonEmptyQueryResultUnifier());

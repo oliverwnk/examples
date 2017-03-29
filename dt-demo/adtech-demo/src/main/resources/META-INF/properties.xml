@@ -3,7 +3,7 @@
 
   <property>
     <name>dt.port.*.attr.QUEUE_CAPACITY</name>
-    <value>16000</value>
+    <value>8000</value>
   </property>
   <property>
     <name>dt.attr.CONTAINER_JVM_OPTIONS</name>
@@ -14,7 +14,7 @@
   <!-- KafkaDataGenerator -->
   <property>
     <name>dt.application.KafkaDataGenerator.operator.kafkaOutput.prop.properties(bootstrap.servers)</name>
-    <value>node18.morado.com:9092</value>
+    <value>node27.morado.com:9092</value>
   </property>
   <property>
     <name>dt.application.KafkaDataGenerator.operator.kafkaOutput.prop.properties(key.serializer)</name>
@@ -100,11 +100,11 @@
   -->
   <property>
     <name>dt.application.adTechDemo.operator.DimensionsComputation.attr.PARTITIONER</name>
-    <value>com.datatorrent.common.partitioner.StatelessPartitioner:16</value>
+    <value>com.datatorrent.common.partitioner.StatelessPartitioner:8</value>
   </property>
   <property>
     <name>dt.application.adTechDemo.operator.DimensionsComputation.attr.MEMORY_MB</name>
-    <value>2048</value>
+    <value>4048</value>
   </property>
   <property>
     <name>dt.application.adTechDemo.operator.Store.embeddableQueryInfoProvider.topic</name>
@@ -126,7 +126,7 @@
   </property>
   <property>
     <name>dt.application.adTechDemo.operator.kafkaInput.prop.clusters</name>
-    <value>node18.morado.com:9092</value>  <!-- broker (NOT zookeeper) address -->
+    <value>node27.morado.com:9092</value>  <!-- broker (NOT zookeeper) address -->
   </property>
   <property>
     <name>dt.application.adTechDemo.operator.kafkaInput.prop.initialOffset</name>

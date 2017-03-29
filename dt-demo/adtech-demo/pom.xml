@@ -371,6 +371,11 @@
       <artifactId>hadoop-hdfs</artifactId>
       <version>2.6.1</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.apex</groupId>
+      <artifactId>apex-engine</artifactId>
+      <version>3.5.0</version>
+    </dependency>
   </dependencies>
 
 </project>
