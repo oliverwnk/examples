@@ -1,10 +1,10 @@
 {"keys":[{"name":"publisher","type":"string","enumValues":["twitter","facebook","yahoo","google","bing","amazon","fox network",
-          "hi-media","inlinks","linkedIn","rakuten"]},
+          "hi-media","inlinks","linkedIn","rakuten","infolinks","chitika","kontera","media.net","buyselladds","clicksor"]},
          {"name":"advertiser","type":"string","enumValues":["starbucks","safeway","mcdonalds","macys","taco bell","walmart",
-          "khol's","san diego zoo","pandas","jack in the box"]},
+          "khol's","san diego zoo","pandas","jack in the box","tomatina","ron swanson","burger king","carls's jr."]},
          {"name":"location","type":"string","enumValues":["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID",
-          "IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC"
-          ]}],
+          "IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC",
+          "ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"]}],
  "timeBuckets":["1m","1h","1d"],
  "values":
   [{"name":"impressions","type":"long","aggregators":["SUM","COUNT","AVG"]},
@@ -17,6 +17,7 @@
    {"combination":["advertiser"], "additionalValues":["impressions:MIN", "clicks:MIN", "cost:MIN", "revenue:MIN", "impressions:MAX", "clicks:MAX", "cost:MAX", "revenue:MAX"]},
    {"combination":["publisher"], "additionalValues":["impressions:MIN", "clicks:MIN", "cost:MIN", "revenue:MIN", "impressions:MAX", "clicks:MAX", "cost:MAX", "revenue:MAX"]},
    {"combination":["advertiser","location"]},
+   {"combination":["publisher","location"]},
    {"combination":["publisher","advertiser"]},
    {"combination":["publisher","advertiser","location"]}]
 }

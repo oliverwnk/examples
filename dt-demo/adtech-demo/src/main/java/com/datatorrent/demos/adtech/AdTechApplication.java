@@ -1,15 +1,13 @@
 package com.datatorrent.demos.adtech;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Map;
 
 import org.apache.apex.malhar.kafka.KafkaSinglePortInputOperator;
 import org.apache.apex.malhar.lib.dimensions.DimensionsEvent;
-import org.apache.commons.lang.mutable.MutableLong;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.viewfs.ConfigUtil;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 import com.datatorrent.api.Context;
@@ -22,7 +20,6 @@ import com.datatorrent.contrib.enrich.JsonFSLoader;
 import com.datatorrent.contrib.enrich.POJOEnricher;
 import com.datatorrent.contrib.parser.CsvParser;
 import com.datatorrent.lib.appdata.schemas.SchemaUtils;
-import com.datatorrent.lib.counters.BasicCounters;
 import com.datatorrent.lib.dimensions.DimensionsComputationFlexibleSingleSchemaPOJO;
 import com.datatorrent.lib.fileaccess.TFileImpl;
 import com.datatorrent.lib.filter.FilterOperator;
@@ -31,10 +28,12 @@ import com.datatorrent.lib.io.PubSubWebSocketAppDataQuery;
 import com.datatorrent.lib.io.PubSubWebSocketAppDataResult;
 import com.datatorrent.lib.statistics.DimensionsComputationUnifierImpl;
 
-@ApplicationAnnotation(name = "adTechDemo")
-public class  AdTechApplication implements StreamingApplication
+@ApplicationAnnotation(name = AdTechApplication.APP_NAME)
+public class AdTechApplication implements StreamingApplication
 {
+  public static final String APP_NAME = "adTechDemo";
   public static final String EVENT_SCHEMA = "adsGenericEventSchema.json";
+  private String PROP_BASE_PATH_PREFIX = "dt.application." + APP_NAME + ".operator.Store.fileStore.basePathPrefix";
 
   @Override
   public void populateDAG(DAG dag, Configuration conf)
@@ -46,10 +45,12 @@ public class  AdTechApplication implements StreamingApplication
     csvParser.setSchema(SchemaUtils.jarResourceFileToString("csvSchema.json"));
     FilterOperator filterLocation = dag.addOperator("filterLocation", FilterOperator.class);
 
+    //setup enricher
     JsonFSLoader fsLoader = new JsonFSLoader();
     POJOEnricher enrich = dag.addOperator("Enrich", POJOEnricher.class);
     enrich.setStore(fsLoader);
-
+    //Sets ExpirationInterval to maximum -> readOnly data never expires
+    enrich.setCacheExpirationInterval(Integer.MAX_VALUE);
     ArrayList includeFields = new ArrayList();
     includeFields.add("location");
     ArrayList lookupFields = new ArrayList();
@@ -57,8 +58,9 @@ public class  AdTechApplication implements StreamingApplication
     enrich.setIncludeFields(includeFields);
     enrich.setLookupFields(lookupFields);
 
-    DimensionsComputationFlexibleSingleSchemaPOJO dimensions = dag.addOperator("DimensionsComputation", DimensionsComputationFlexibleSingleSchemaPOJO.class);
 
+    DimensionsComputationFlexibleSingleSchemaPOJO dimensions = dag.addOperator("DimensionsComputation",
+        DimensionsComputationFlexibleSingleSchemaPOJO.class);
 
     Map<String, String> keyToExpression = Maps.newHashMap();
     keyToExpression.put("publisher", "getPublisher()");
@@ -75,38 +77,27 @@ public class  AdTechApplication implements StreamingApplication
     dimensions.setKeyToExpression(keyToExpression);
     dimensions.setAggregateToExpression(aggregateToExpression);
     dimensions.setConfigurationSchemaJSON(eventSchema);
-
-
     dimensions.setUnifier(new DimensionsComputationUnifierImpl<DimensionsEvent.InputEvent, DimensionsEvent.Aggregate>());
     dag.getMeta(dimensions).getMeta(dimensions.output).getUnifierMeta().getAttributes().put(Context.OperatorContext.MEMORY_MB,
-        8092);
+      2048);
 
     //Set store properties
     AppDataSingleSchemaDimensionStoreHDHT store = dag.addOperator("Store", AppDataSingleSchemaDimensionStoreHDHT.class);
-    dag.setOperatorAttribute(store, Context.OperatorContext.APPLICATION_WINDOW_COUNT, 16);
-    dag.setOperatorAttribute(store, Context.OperatorContext.CHECKPOINT_WINDOW_COUNT, 16);
+    dag.setOperatorAttribute(store, Context.OperatorContext.APPLICATION_WINDOW_COUNT, 4);
+    dag.setOperatorAttribute(store, Context.OperatorContext.CHECKPOINT_WINDOW_COUNT, 4);
     AggregateStreamCodec codec = new AggregateStreamCodec();
     dag.setInputPortAttribute(store.input, Context.PortContext.STREAM_CODEC, codec);
 
-    //store.setUpdateEnumValues(true);
+    String basePath = Preconditions.checkNotNull(conf.get(PROP_BASE_PATH_PREFIX),
+      "Base path prefix should be specified in the properties.xml");
     TFileImpl hdsFile = new TFileImpl.DTFileImpl();
-    hdsFile.setBasePath("AdsDimensionsDemo/Store" + System.currentTimeMillis());
+    hdsFile.setBasePath(basePath + System.currentTimeMillis());
     store.setFileStore(hdsFile);
-    //dag.setAttribute(store, Context.OperatorContext.COUNTERS_AGGREGATOR,
-    //  new BasicCounters.LongAggregator<MutableLong>());
     store.setConfigurationSchemaJSON(eventSchema);
-
-    store.setNumberOfBuckets(4);
-    store.setPartitionCount(4);
-
-    //PubSubWebSocketAppDataQuery query = new PubSubWebSocketAppDataQuery();
-    //URI queryUri = ConfigUtil.getAppDataQueryPubSubURI(dag, conf);
-    //query.setUri(queryUri);
     store.setEmbeddableQueryInfoProvider(new PubSubWebSocketAppDataQuery());
     PubSubWebSocketAppDataResult wsOut = dag.addOperator("QueryResult", new PubSubWebSocketAppDataResult());
 
-    dag.setOutputPortAttribute(dimensions.output, Context.PortContext.UNIFIER_LIMIT, 2);
-
+    //dag.setOutputPortAttribute(dimensions.output, Context.PortContext.UNIFIER_LIMIT, 2);
 
     store.setQueryResultUnifier(new DimensionStoreHDHTNonEmptyQueryResultUnifier());
     dag.addStream("kafkaInputStream", kafkaInput.outputPort, csvParser.in).setLocality(DAG.Locality.CONTAINER_LOCAL);
