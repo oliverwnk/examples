@@ -32,7 +32,7 @@
     <value>true</value>
   </property>
 
-  <!-- FilterOperator -->
+  <!-- Filter Operator -->
   <property>
     <name>dt.application.adTechDemo.operator.filterLocation.port.input.attr.TUPLE_CLASS</name>
     <value>com.datatorrent.demos.adtech.AdInfo</value>
@@ -79,14 +79,14 @@
   </property>
   <property>
     <name>dt.application.adTechDemo.operator.DimensionsComputation.attr.MEMORY_MB</name>
-    <value>4048</value>
+    <value>4096</value>
   </property>
   <property>
     <name>dt.operator.QueryResult.topic</name>
     <value>AdTechDemoQueryResult</value>
   </property>
 
-  <!-- kafkainput operator -->
+  <!-- KafkaInput operator -->
   <property>
     <name>dt.application.adTechDemo.operator.kafkaInput.attr.MEMORY_MB</name>
     <value>2048</value>

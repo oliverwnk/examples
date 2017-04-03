@@ -199,6 +199,18 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.0.2</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <!-- Transform xml javadoc to stripped down version containing only class/interface comments and tags-->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -376,6 +388,15 @@
       <artifactId>apex-engine</artifactId>
       <version>3.5.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.apex</groupId>
+      <artifactId>malhar-library</artifactId>
+      <type>test-jar</type>
+      <version>${malhar.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+
   </dependencies>
 
 </project>

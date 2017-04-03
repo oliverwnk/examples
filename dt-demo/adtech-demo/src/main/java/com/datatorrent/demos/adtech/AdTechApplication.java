@@ -58,7 +58,6 @@ public class AdTechApplication implements StreamingApplication
     enrich.setIncludeFields(includeFields);
     enrich.setLookupFields(lookupFields);
 
-
     DimensionsComputationFlexibleSingleSchemaPOJO dimensions = dag.addOperator("DimensionsComputation",
         DimensionsComputationFlexibleSingleSchemaPOJO.class);
 
@@ -107,8 +106,8 @@ public class AdTechApplication implements StreamingApplication
     ConsoleOutputOperator consoleFiltered = dag.addOperator("consoleFiltered", ConsoleOutputOperator.class);
     dag.addStream("outsorted", filterLocation.falsePort, consoleFiltered.input).setLocality(DAG.Locality.CONTAINER_LOCAL);
 
-    dag.addStream("InputStream", enrich.output, dimensions.input);
-    dag.addStream("DimensionalData", dimensions.output, store.input);
-    dag.addStream("QueryResult", store.queryResult, wsOut.input);
+    dag.addStream("enrichedStream", enrich.output, dimensions.input);
+    dag.addStream("dimensionalData", dimensions.output, store.input);
+    dag.addStream("queryResult", store.queryResult, wsOut.input);
   }
 }
