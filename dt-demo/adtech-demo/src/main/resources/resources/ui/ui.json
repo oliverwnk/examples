@@ -1,0 +1,9 @@
+{
+  "dashboards": [
+    {
+      "name": "AdTech Demo",
+      "file": "adTechVis.dtdashboard",
+      "appNames": ["adTechDemo"]
+    }
+  ]
+}

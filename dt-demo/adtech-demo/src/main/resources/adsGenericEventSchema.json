@@ -1,4 +1,5 @@
-{"keys":[{"name":"publisher","type":"string","enumValues":["twitter","facebook","yahoo","google","bing","amazon","fox network",
+{"tags":["geo"],
+ "keys":[{"name":"publisher","type":"string","enumValues":["twitter","facebook","yahoo","google","bing","amazon","fox network",
           "hi-media","inlinks","linkedIn","rakuten","infolinks","chitika","kontera","media.net","buyselladds","clicksor"]},
          {"name":"advertiser","type":"string","enumValues":["starbucks","safeway","mcdonalds","macys","taco bell","walmart",
           "khol's","san diego zoo","pandas","jack in the box","tomatina","ron swanson","burger king","carls's jr."]},
